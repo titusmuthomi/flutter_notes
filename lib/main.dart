@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tito_login/email/simple/authenticate.dart';
+import 'package:tito_login/services/constants/theme.dart';
+
+import 'email/simple/login.dart';
+import 'email/simple/reset_pass.dart';
+import 'email/simple/signup.dart';
+import 'email/simple/verify_email.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,56 +19,78 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Authentication',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme(),
+      initialRoute: Home.name,
+      routes: {
+        Authenticate.name: (_) => const Authenticate(),
+        VerifyEmail.name: (_) => const VerifyEmail(),
+        ResetPassword.name: (_) => const ResetPassword(),
+        Home.name: (_) => const Home(),
+      },
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class Home extends StatefulWidget {
+  const Home({
+    super.key,
+  });
+  static const name = '/home';
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<Home> createState() => _HomeState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('Authentification'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          // ignore: prefer_const_literals_to_create_immutables
           children: <Widget>[
-// Native Providers - Email/Password , Phone, Anonymous
-
-// Other  - Google,Facebook,Microsoft,Apple,Twitter,Playgames, Github,Yahoo..
+            // Native Providers - Email/Password , Phone, Anonymous
+            TextButton(
+                onPressed: () {},
+                child: const Text('Login with email and Password')),
+            const SizedBox(
+              height: 10,
+            ),
+            TextButton(
+                onPressed: () {},
+                child: const Text('Login with email and Password Decorated')),
+            const SizedBox(
+              height: 10,
+            ),
+            TextButton(onPressed: () {}, child: const Text('Phone')),
+            const SizedBox(
+              height: 10,
+            ),
+            TextButton(onPressed: () {}, child: const Text('Anonymous')),
+            const SizedBox(
+              height: 10,
+            ),
+            // Other  - Google,Facebook,Microsoft,Apple,Twitter,Playgames, Github,Yahoo..
+            TextButton(onPressed: () {}, child: const Text('Google')),
+            const SizedBox(
+              height: 10,
+            ),
+            TextButton(onPressed: () {}, child: const Text('FaceBook')),
+            const SizedBox(
+              height: 10,
+            ),
+            TextButton(onPressed: () {}, child: const Text('Microsoft')),
+            const SizedBox(
+              height: 10,
+            ),
+            TextButton(onPressed: () {}, child: const Text('Github')),
+            const SizedBox(
+              height: 10,
+            ),
           ],
         ),
       ),
