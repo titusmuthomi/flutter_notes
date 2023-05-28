@@ -10,6 +10,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:tito_login/services/constants/global_text.dart';
 import 'package:tito_login/services/constants/theme.dart';
@@ -39,7 +40,7 @@ class _SignupState extends State<Signup> {
   final TextEditingController _passController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _roleController =
-      TextEditingController(text: 'Select Role');
+      TextEditingController(text: TextConst.role0);
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _oscureText = true;
   final FocusNode _passFocusNode = FocusNode();
@@ -147,12 +148,12 @@ class _SignupState extends State<Signup> {
         // set ref assign firebase instance
         final ref = FirebaseStorage.instance
             .ref()
-            .child('Admins') //create folder
+            .child('Users') //create folder
             .child('${uid}_.jpg'); //er
         await ref.putFile(imageFile!); // pull file
         imageUrl = await ref.getDownloadURL();
 
-        FirebaseFirestore.instance.collection('Administrators').doc(uid).set({
+        FirebaseFirestore.instance.collection('Users').doc(uid).set({
           'id': uid,
           'fName': _firstNameController.text,
           'lName': _lastNameController.text,
@@ -160,7 +161,7 @@ class _SignupState extends State<Signup> {
           'userImage': imageUrl,
           'phoneNumber': _phoneController.text,
           'role': _roleController.text,
-          'createdAt': Timestamp.now(),
+          'createdAt': DateTime.now(),
         });
         //TODO: Navigate to home
         // Navigator.pushReplacement(
@@ -245,13 +246,10 @@ class _SignupState extends State<Signup> {
           padding: const EdgeInsets.all(30),
           child: ListView(
             children: <Widget>[
-              sizedBox50(),
+              Container(alignment: Alignment.center, child: TextConst.appName),
+              Container(alignment: Alignment.center, child: TextConst.appHash),
               Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(10),
-                  child: TextConst.appName),
-              Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(5),
                 child: Form(
                   key: _signUpFormKey,
                   child: Column(
@@ -284,47 +282,103 @@ class _SignupState extends State<Signup> {
                               )),
                         ),
                       ),
+                      sizedBox10(),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: const Text(
+                          '* all fields Required',
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      sizedBox10(),
                       Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          TextFormField(
-                            controller: _firstNameController,
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.name,
-                            decoration: FormStyle.authLight.copyWith(
-                              hintText: 'First Name ',
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            child: TextFormField(
+                              controller: _firstNameController,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.name,
+                              decoration: FormStyle.authLight.copyWith(
+                                hintText: 'First Name ',
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please Enter First Name';
+                                } else {
+                                  return null;
+                                }
+                              },
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please Enter First Name';
-                              } else {
-                                return null;
-                              }
-                            },
                           ),
-                          TextFormField(
-                            controller: _lastNameController,
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.name,
-                            decoration: FormStyle.authLight.copyWith(
-                              hintText: 'Last Name ',
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            child: TextFormField(
+                              controller: _lastNameController,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.name,
+                              decoration: FormStyle.authLight.copyWith(
+                                hintText: 'Last Name ',
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please Enter Last Name';
+                                } else {
+                                  return null;
+                                }
+                              },
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please Enter Last Name';
-                              } else {
-                                return null;
-                              }
-                            },
                           ),
                         ],
                       ),
-                      formSizedBox(),
+                      sizedBox10(),
+                      TextFormField(
+                        controller: _phoneController,
+                        maxLength: 10,
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.phone,
+                        decoration: FormStyle.authLight.copyWith(
+                          label: const Text('Phone Number'),
+                        ),
+                        validator: (value) {
+                          if (value == null ||
+                              value.contains(RegExp(r'[A-Z]' '[a-z]')) ||
+                              value.isEmpty ||
+                              value.length < 10) {
+                            return 'Enter Valid Phone Number';
+                          }
+                          return null;
+                        },
+                      ),
+                      sizedBox10(),
+                      TextFormField(
+                        controller: _roleController,
+                        readOnly: true,
+                        onTap: () {
+                          showRoles(size: size);
+                        },
+                        textInputAction: TextInputAction.next,
+                        decoration: FormStyle.authLight.copyWith(
+                          label: const Text('Select Role'),
+                        ),
+                        validator: (value) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              value == TextConst.role0) {
+                            return 'Please Select Role';
+                          }
+                          return null;
+                        },
+                      ),
+                      sizedBox10(),
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         decoration: FormStyle.authLight.copyWith(
-                          prefixIcon: const Icon(Icons.email),
+                          suffixIcon: const Icon(Icons.email),
                           label: const Text('Email'),
                         ),
                         validator: (value) {
@@ -336,15 +390,14 @@ class _SignupState extends State<Signup> {
                           return null;
                         },
                       ),
-                      formSizedBox(),
+                      sizedBox10(),
                       TextFormField(
                         obscureText: !_oscureText, // changing dynamnically
                         onEditingComplete: () =>
                             FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.visiblePassword,
                         controller: _passController,
-                        //focusNode: _passwordFocus,
-                        textInputAction: TextInputAction.next,
+                        textInputAction: TextInputAction.done,
 
                         decoration: FormStyle.authLight.copyWith(
                             label: const Text('Password'),
@@ -366,77 +419,63 @@ class _SignupState extends State<Signup> {
                           if (value == null ||
                               value.isEmpty ||
                               value.length < 6) {
-                            return 'Must be memorable; more than 6 characters';
-                          }
-                          return null;
-                        },
-                      ),
-                      formSizedBox(),
-                      TextFormField(
-                        controller: _phoneController,
-                        maxLength: 10,
-                        textInputAction: TextInputAction.done,
-                        decoration: FormStyle.authLight.copyWith(
-                          label: const Text('Phone Number'),
-                        ),
-                        validator: (value) {
-                          if (value == null ||
-                              value.contains(RegExp(r'[A-Z]' '[a-z]')) ||
-                              value.isEmpty ||
-                              value.length < 10) {
-                            return 'Enter Valid Phone Number';
+                            return 'Must be memorable and more than 6 characters';
                           }
                           return null;
                         },
                       ),
                       sizedBox10(),
-                      TextFormField(
-                        controller: _roleController,
-                        readOnly: true,
-                        onTap: () {
-                          showRoles(size: size);
-                        },
-                        textInputAction: TextInputAction.done,
-                        decoration: FormStyle.authLight.copyWith(
-                          label: const Text('Select Role'),
-                        ),
-                        validator: (value) {
-                          if (value == null ||
-                              value.isEmpty ||
-                              value == 'Select Role') {
-                            return 'Please Select Role';
-                          }
-                          return null;
-                        },
-                      ),
-                      Column(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Checkbox(
-                                value: agree,
-                                onChanged: ((value) {
-                                  setState(() {
-                                    agree = value ?? false;
-                                  });
-                                }),
-                              ),
-                              const Text(
-                                'I accept CRA Policies',
-                                overflow: TextOverflow.fade,
-                              ),
-                            ],
+                          Checkbox(
+                            value: agree,
+                            onChanged: ((value) {
+                              setState(() {
+                                agree = value ?? false;
+                              });
+                            }),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                                style: const TextStyle(color: Themed.black),
+                                text: 'I Accept all ',
+                                children: [
+                                  const TextSpan(
+                                    text: ' ',
+                                  ),
+                                  TextSpan(
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = _launchPrivacyUrl,
+                                    text: 'Terms and Conditions',
+                                    style: AuthStyle.switchPage,
+                                  ),
+                                ]),
                           ),
                         ],
                       ),
                       sizedBox10(),
                       _isloading
-                          ? const Center(
+                          ? Center(
                               child: SizedBox(
-                                width: 70,
-                                height: 70,
-                                child: CircularProgressIndicator(),
+                                width: 300,
+                                height: 50,
+                                child: Stack(
+                                  children: [
+                                    const LinearProgressIndicator(
+                                      backgroundColor: Themed.accentColor,
+                                      color: Themed.primaryColor,
+                                    ),
+                                    sizedBox10(),
+                                    const Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Text(
+                                          'Loading',
+                                          style: TextStyle(
+                                              color: Themed.primaryColor),
+                                        ))
+                                  ],
+                                ),
                               ),
                             )
                           : ElevatedButton.icon(
@@ -446,7 +485,7 @@ class _SignupState extends State<Signup> {
                                   backgroundColor: Themed.primaryColor,
                                   textStyle: const TextStyle(fontSize: 24),
                                   shadowColor: Themed.shadow),
-                              onPressed: agree ? _doSomething : null,
+                              onPressed: agree ? _submitFormOnSignup : null,
                               label: const Text('Sign Up'),
                             )
                     ],
@@ -524,6 +563,14 @@ class _SignupState extends State<Signup> {
           ),
         );
       }
+    }
+  }
+
+  final Uri _urlprivacypolicy = Uri.parse(
+      'https://github.com/varsityelectionsKe/coopdecides2023/blob/main/privacypolicy.md');
+  Future<void> _launchPrivacyUrl() async {
+    if (!await launchUrl(_urlprivacypolicy)) {
+      throw Exception('Could not launch $_urlprivacypolicy');
     }
   }
 }

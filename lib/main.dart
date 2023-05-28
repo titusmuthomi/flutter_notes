@@ -1,13 +1,17 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tito_login/email/simple/authenticate.dart';
 import 'package:tito_login/services/constants/theme.dart';
 
-import 'email/simple/login.dart';
 import 'email/simple/reset_pass.dart';
-import 'email/simple/signup.dart';
 import 'email/simple/verify_email.dart';
+import 'services/firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -47,7 +51,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Authentification'),
+        title: Text('Authentication'),
       ),
       body: Center(
         child: Column(
@@ -55,7 +59,9 @@ class _HomeState extends State<Home> {
           children: <Widget>[
             // Native Providers - Email/Password , Phone, Anonymous
             TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pushNamed(Authenticate.name);
+                },
                 child: const Text('Login with email and Password')),
             const SizedBox(
               height: 10,

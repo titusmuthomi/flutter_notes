@@ -53,11 +53,6 @@ class _VerifyEmailState extends State<VerifyEmail> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SpinKitFoldingCube(
-                  duration: Duration(milliseconds: 2000),
-                  color: Colors.white,
-                  size: 50,
-                ),
                 sizedBox50(),
                 const Text(
                   'A Verification email has been sent to your Email \n This is OneTime',

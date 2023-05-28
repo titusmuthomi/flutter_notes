@@ -10,6 +10,11 @@ ThemeData AppTheme() {
     hintColor: Themed.primaryColor,
     iconTheme: const IconThemeData(color: Themed.primaryColor),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(),
+    checkboxTheme: const CheckboxThemeData(
+        checkColor: MaterialStatePropertyAll(Themed.white),
+        fillColor: MaterialStatePropertyAll(Themed.primaryColor),
+        side: BorderSide(
+            color: Themed.accentColor, style: BorderStyle.solid, width: 2)),
     progressIndicatorTheme:
         const ProgressIndicatorThemeData(color: Themed.primaryColor),
     snackBarTheme: const SnackBarThemeData(
@@ -20,6 +25,7 @@ ThemeData AppTheme() {
     inputDecorationTheme: const InputDecorationTheme(
       labelStyle: TextStyle(color: Themed.primaryColor),
       prefixIconColor: Themed.primaryColor,
+      suffixIconColor: Themed.primaryColor,
       enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Themed.primaryColor, width: 1.5),
           borderRadius: BorderRadius.all(Radius.circular(12.0))),
@@ -61,9 +67,9 @@ class AuthStyle {
   static const hintLight = TextStyle(fontSize: 20, color: Themed.primaryColor);
 
   static const forgotPass = TextStyle(
-      color: Themed.accentColor,
-      decoration: TextDecoration.underline,
-      fontSize: 20);
+    color: Themed.accentColor,
+    decoration: TextDecoration.underline,
+  );
 
   static const switchPage = TextStyle(
     fontSize: 15,
@@ -77,6 +83,7 @@ class AuthStyle {
 class FormStyle {
   static const InputDecoration authDark = InputDecoration(
     hintStyle: TextStyle(color: Themed.white),
+    labelStyle: TextStyle(color: Themed.white),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(16)),
       borderSide: BorderSide(color: Themed.white, width: 1.5),
@@ -86,17 +93,13 @@ class FormStyle {
       borderSide: BorderSide(color: Themed.yellow, width: 1.5),
     ),
     enabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Themed.yellow, width: 1.5),
+      borderSide: BorderSide(color: Themed.white, width: 1.5),
       borderRadius: BorderRadius.all(Radius.circular(16)),
     ),
   );
 
   static const authLight = InputDecoration(
     labelStyle: TextStyle(color: Themed.primaryColor),
-    label: Text(
-      'Email',
-      style: TextStyle(),
-    ),
     enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(color: Themed.primaryColor, width: 1.5),
         borderRadius: BorderRadius.all(Radius.circular(12.0))),
